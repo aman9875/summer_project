@@ -23,9 +23,9 @@ print "\n\n"
 # making a list for storing the states of the five ships and a list to store their lenghts
 """   name         index    symbol   size
 
-	  Carrier		0		C   	5  
-	  Battleship	1 		B   	4
-	  Cruiser	    2   	R   	3
+	  Carrier       0	C   	5  
+	  Battleship	1 	B   	4
+	  Cruiser	2   	R   	3
 	  Submarine     3   	S   	3
 	  Destroyer     4   	D   	2
 """
@@ -71,13 +71,21 @@ def update_shipstate():
 	ships=['C','B','R','S','D']
 	idx=0
 	global shipstate
-	shipstate=[0,0,0,0,0]
 	for letter in ships:
-		for i in range(0,10):
-			for j in range(0,10):
-				if ship_matrix[i][j]==letter:
-					shipstate[idx]=1
-		idx+=1				
+		if shipstate[idx]==1:
+			shipstate[idx]=0
+			for i in range(0,10):
+				for j in range(0,10):
+					if ship_matrix[i][j]==letter:
+						shipstate[idx]=1
+						break                                                                                                                                                                                    
+			if 	shipstate[idx]==0:
+				print "The ship %c is completely destroyed,go to hunt mode again" %letter
+				for q in range(0,10):
+					for y in range(0,10):
+						if ship_matrix1[q][y]==letter:
+							matrix[q][y]='M'
+		idx+=1							
 
 # matrix that stores the probability distribution of cells on the grid
 probability = [[0 for x in range(10)]for y in range(10)]
@@ -298,9 +306,9 @@ def target_mode(i,j,char):
 		print "Hit"
 		# update the values of the matrix
 		ship_matrix[next_target[0]][next_target[1]]='X'
-		update_shipstate()
 		matrix[i][j]='H'
 		matrix[next_target[0]][next_target[1]]='H'
+		update_shipstate()
 		#probability[next_target[0]][next_target[1]]=0
 		# decide the direction
 		direction=""
@@ -312,12 +320,12 @@ def target_mode(i,j,char):
 			direction="right"
 		else:
 			direction="down"
-		print direction
+		#print direction
 		if ship_destroyed(i,j,char)==False:
 		# call the function to completely destroy the ship
 			destroy_ship(direction,next_target[0],next_target[1],i,j,char,0)
 		else:
-			print "the ship %c is completely destroyed,go to hunt mode again" %char
+			#print "the ship %c is completely destroyed,go to hunt mode again" %char
 			update_matrix(char)
 		#print matrix
 		#print ship_matrix
@@ -344,14 +352,10 @@ def destroy_ship(direction,i,j,start_i,start_j,char,flag):      # the flag helps
 					print "(%d,%d)"%(i-1,j)
 					print "Hit"
 					ship_matrix[i-1][j]='X'
-					update_shipstate()
 					matrix[i-1][j]='H'
+					update_shipstate()
 					if ship_destroyed(start_i,start_j,char)==False:
 						destroy_ship("up",i-1,j,start_i,start_j,char,flag)
-					else:
-						print "The ship %c is completely destroyed,go to hunt mode again" %char
-						update_matrix(char)
-						return 	
 				else:
 					print "(%d,%d)"%(i-1,j)
 					print "Missed"
@@ -372,14 +376,10 @@ def destroy_ship(direction,i,j,start_i,start_j,char,flag):      # the flag helps
 					print "(%d,%d)" %(i,j-1)
 					print "Hit"
 					ship_matrix[i][j-1]='X'
-					update_shipstate()
 					matrix[i][j-1]='H'
+					update_shipstate()
 					if ship_destroyed(start_i,start_j,char)==False:
 						destroy_ship("left",i,j-1,start_i,start_j,char,flag)
-					else:
-						print "The ship %c is completely destroyed,go to hunt mode again" %char
-						update_matrix(char)
-						return
 				else:
 					print "(%d,%d)" %(i,j-1)
 					print "Missed"   
@@ -400,14 +400,10 @@ def destroy_ship(direction,i,j,start_i,start_j,char,flag):      # the flag helps
 					print "(%d,%d)" %(i+1,j)
 					print "Hit"
 					ship_matrix[i+1][j]='X'
-					update_shipstate()
 					matrix[i+1][j]='H'
+					update_shipstate()
 					if ship_destroyed(start_i,start_j,char)==False:
 						destroy_ship("down",i+1,j,start_i,start_j,char,flag)
-					else:
-						print "The ship %c is completely destroyed,go to hunt mode again" %char
-						update_matrix(char)
-						return	
 				else:
 					print "(%d,%d)" %(i+1,j)
 					print "Missed"
@@ -429,14 +425,10 @@ def destroy_ship(direction,i,j,start_i,start_j,char,flag):      # the flag helps
 					print "(%d,%d)" %(i,j+1)
 					print "Hit"
 					ship_matrix[i][j+1]='X'
-					update_shipstate()
 					matrix[i][j+1]='H'
+					update_shipstate()
 					if ship_destroyed(start_i,start_j,char)==False:
 						destroy_ship("right",i,j+1,start_i,start_j,char,flag)
-					else:
-						print "The ship %c is completely destroyed,go to hunt mode again" %char
-						update_matrix(char)
-						return	
 				else:
 					print "(%d,%d)" %(i,j+1)
 					print "Missed"
