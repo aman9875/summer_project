@@ -1,8 +1,7 @@
 from sys import argv
 from random import randint
 from sys import exit
-script,file1,file2 = argv
-txt1=open(file1)
+script,file2 = argv
 txt2=open(file2)
 matrix = [[0 for x in range(10)]for y in range(10)]
 ship_matrix=[[0 for i in range(0,10)]for i in range(0,10)]
@@ -10,22 +9,22 @@ ship_matrix1=[[0 for i in range(0,10)]for i in range(0,10)]
 # this list will only store whether a cell is a miss('M') or it is unknown('0')
 for i in range(10):
 	for j in range(10):
-		matrix[i][j] = txt1.read(1)
-		char = txt1.read(1)
+		matrix[i][j]=0
 
-print "Print the input matrix\n"
+'''print "Print the input matrix\n"
 for i in range(0,10):
 	for j in range(0,10):
 		print "%c "%matrix[i][j],
 	print "\n"	
 
 print "\n\n"
+'''
 # making a list for storing the states of the five ships and a list to store their lenghts
 """   name         index    symbol   size
 
-	  Carrier       0	C   	5  
-	  Battleship	1 	B   	4
-	  Cruiser	2   	R   	3
+	  Carrier		0		C   	5  
+	  Battleship	1 		B   	4
+	  Cruiser	    2   	R   	3
 	  Submarine     3   	S   	3
 	  Destroyer     4   	D   	2
 """
@@ -167,6 +166,7 @@ def hunt_begin():
 								count=0
 			#print_prob()
 		else:
+			matrix[target_i][target_j]='0'
 			target_mode(target_i,target_j,ship_matrix1[target_i][target_j])
 			hunt_begin()	
 
@@ -180,13 +180,29 @@ def print_prob():
 
 # returns the cell with max probability among all possible(not tried) cells of the matrix
 def calc_max_prob():
+	count=1
+	max_matrix=[[0 for x in range(10)]for y in range(10)]
 	max_val = 0
 	max_index = [0,0]
 	for i in range(0,10):
 		for j in range(0,10):
 			if probability[i][j]>max_val:
 				max_val = probability[i][j]
-				max_index = [i,j]
+				max_index=[i,j]
+
+	"""for i in range(0,10):
+		for j in range(0,10):
+			if probability[i][j]==max_val:
+				max_matrix[i][j]=count;
+				count+=1;
+
+	random=randint(1,count-1)	
+	for i in range(0,10):
+		for j in range(0,10):
+			if max_matrix[i][j]==random:
+				max_index=[i,j]
+				break;			
+			"""
 	print("max_index = (%d,%d)"%(max_index[0],max_index[1]))
 	return max_index			
 
@@ -202,8 +218,8 @@ def hunt():
 			count_moves+=1
 			matrix[max_index[0]][max_index[1]]='M'
 			probability[max_index[0]][max_index[1]]=0
-			for x in range(5):
-				if shipstate[x] ==1:
+			'''for x in range(5):
+				if shipstate[x]==1:
 					length = ship_size[x]
 					count1=0
 					count2=0
@@ -245,7 +261,13 @@ def hunt():
 					value=1	
 					for i in range(max_index[0]-count2,max_index[0]):
 						probability[i][max_index[1]] = probability[i][max_index[1]] - value
-						value = value+1
+						value = value+1'''
+			for y in range(0,10):
+				if(y!=max_index[1]):
+					probability[max_index[0]][y]=count_horizontal(max_index[0],y)+count_vertical(max_index[0],y)
+			for x in range(0,10):
+				if(x!=max_index[0]):
+					probability[x][max_index[1]]=count_horizontal(x,max_index[1])+count_vertical(x,max_index[1])					
 			#print_prob()
 			hunt()
 		elif ship_matrix[max_index[0]][max_index[1]] !='X':
@@ -276,14 +298,10 @@ def target_mode(i,j,char):
 	global count_moves
 	count=[0,0,0,0]
 	# to count the possible options for the four neighbours once a cell is hit
-	count_horizontal(i,j-1,0)
-	count_vertical(i,j-1,0)
-	count_horizontal(i-1,j,1)
-	count_vertical(i-1,j,1)
-	count_horizontal(i,j+1,2)
-	count_vertical(i,j+1,2)
-	count_horizontal(i+1,j,3)
-	count_vertical(i+1,j,3)
+	count[0]=count_horizontal(i,j-1)+count_vertical(i,j-1)
+	count[1]=count_horizontal(i-1,j)+count_vertical(i-1,j)
+	count[2]=count_horizontal(i,j+1)+count_vertical(i,j+1)
+	count[3]=count_horizontal(i+1,j)+count_vertical(i+1,j)
 	max_index=maximum()
 	# deciding the next target
 	if max_index==0:
@@ -477,7 +495,8 @@ def update_matrix(char):
 				matrix[i][j]='M'	
 
 # counts the number of ways to place all(alive) ships horizontally such that they pass through (i,j)
-def count_horizontal(i,j,index):
+def count_horizontal(i,j):
+	s=0
 	idx=0
 	for size in ship_size:
 		if shipstate[idx]==0:
@@ -494,11 +513,14 @@ def count_horizontal(i,j,index):
 							break
 
 					if flag==1:
-						count[index]+=1
+						s+=1
 	idx+=1
+
+	return s
 			
 # counts the number of ways to place all(alive) ships vertically such that they pass through (i,j)
-def count_vertical(i,j,index):
+def count_vertical(i,j):
+	s=0
 	idx=0
 	for size in ship_size:
 		if shipstate[idx]==0:
@@ -515,8 +537,10 @@ def count_vertical(i,j,index):
 							break
 
 					if flag==1:
-						count[index]+=1
+						s+=1
 	idx+=1
+
+	return s
 
 
 hunt_begin()
