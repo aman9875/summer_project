@@ -10,14 +10,6 @@ ship_matrix1=[[0 for i in range(0,10)]for i in range(0,10)]
 for i in range(10):
 	for j in range(10):
 		matrix[i][j] =0
-
-#print "Print the input matrix\n"
-'''for i in range(0,10):
-	for j in range(0,10):
-		print "%d "%matrix[i][j],
-	print "\n"	
-
-print "\n\n"'''
 # making a list for storing the states of the five ships and a list to store their lenghts
 """   name         index    symbol   size
 
@@ -30,15 +22,11 @@ print "\n\n"'''
 for i in range(0,10):
 	for j in range(0,10):
 		ship_matrix[i][j]=txt2.read(1)
+		char=txt2.read(1)
 
 for i in range(0,10):
 	for j in range(0,10):
 		ship_matrix1[i][j]=ship_matrix[i][j]
-
-'''for i in range(0,10):
-	for j in range(0,10):
-		print "%c "%ship_matrix[i][j],
-	print "\n"'''		
 
 ship_size= [5,4,3,3,2]
 shipstate= [1,1,1,1,1]
@@ -216,50 +204,6 @@ def hunt():
 			count_moves+=1
 			matrix[max_index[0]][max_index[1]]='M'
 			probability[max_index[0]][max_index[1]]=0
-			'''for x in range(5):
-				if shipstate[x]==1:
-					length = ship_size[x]
-					count1=0
-					count2=0
-					for i in range(max_index[1]+1,min(max_index[1]+length,10)):
-						if not(matrix[max_index[0]][i] =='M'):
-							count1 = count1+1
-						else:
-							break	
-					for i in range(max(max_index[1]-length+1,0),max_index[1]):
-						if not(matrix[max_index[0]][i] =='M'):
-							count2 = count2+1
-						else:
-							break
-					value = 1
-					for i in xrange(max_index[1]+count1,max_index[1],-1):
-						probability[max_index[0]][i] = probability[max_index[0]][i] - value
-						value = value+1
-					value=1	
-					for i in range(max_index[1]-count2,max_index[1]):
-						probability[max_index[0]][i] = probability[max_index[0]][i] - value
-						value = value+1	
-
-					count1=0
-					count2=0
-					for i in range(max_index[0]+1,min(max_index[0]+length,10)):
-						if not(matrix[i][max_index[1]] =='M'):
-							count1 = count1+1
-						else:
-							break	
-					for i in range(max(max_index[0]-length+1,0),max_index[0]):
-						if not(matrix[i][max_index[1]] =='M'):
-							count2 = count2+1
-						else:
-							break
-					value = 1
-					for i in xrange(max_index[0]+count1,max_index[0],-1):
-						probability[i][max_index[1]] = probability[i][max_index[1]] - value
-						value = value+1
-					value=1	
-					for i in range(max_index[0]-count2,max_index[0]):
-						probability[i][max_index[1]] = probability[i][max_index[1]] - value
-						value = value+1'''
 			for y in range(0,10):
 				if(y!=max_index[1]):
 					probability[max_index[0]][y]=count_horizontal(max_index[0],y)+count_vertical(max_index[0],y)
@@ -306,51 +250,54 @@ def target_mode(i,j,char):
 	count[1]=count_horizontal(i-1,j)+count_vertical(i-1,j)
 	count[2]=count_horizontal(i,j+1)+count_vertical(i,j+1)
 	count[3]=count_horizontal(i+1,j)+count_vertical(i+1,j)
-	max_index=maximum()
-	# deciding the next target
-	if max_index==0:
-		next_target=[i,j-1]
-	elif max_index==1:
-		next_target=[i-1,j]
-	elif max_index==2:
-		next_target=[i,j+1]
-	else:
-		next_target=[i+1,j]
-	#print "(%d,%d)" %(next_target[0],next_target[1])
-	# if the next target turns a miss recursivevly call the function again
-	if ship_matrix[next_target[0]][next_target[1]]=='0':
-		count_moves+=1
-		#print "Missed"
-		matrix[next_target[0]][next_target[1]]='M'
-		target_mode(i,j,char)
-	else:
-		count_moves+=1
-		#print "Hit"
-		# update the values of the matrix
-		ship_matrix[next_target[0]][next_target[1]]='X'
-		matrix[i][j]='H'
-		matrix[next_target[0]][next_target[1]]='H'
-		update_shipstate()
-		#probability[next_target[0]][next_target[1]]=0
-		# decide the direction
-		direction=""
+	if count[0]>0 or count[1]>0 or count[2]>0 or count[3]>0:
+		max_index=maximum()
+		# deciding the next target
 		if max_index==0:
-			direction="left"
+			next_target=[i,j-1]
 		elif max_index==1:
-			direction="up"
+			next_target=[i-1,j]
 		elif max_index==2:
-			direction="right"
+			next_target=[i,j+1]
 		else:
-			direction="down"
-		#print direction
-		if ship_destroyed(i,j,char)==False:
-		# call the function to completely destroy the ship
-			destroy_ship(direction,next_target[0],next_target[1],i,j,char,0)
+			next_target=[i+1,j]
+		#print "(%d,%d)" %(next_target[0],next_target[1])
+		# if the next target turns a miss recursivevly call the function again
+		if ship_matrix[next_target[0]][next_target[1]]=='0':
+			count_moves+=1
+			#print "Missed"
+			matrix[next_target[0]][next_target[1]]='M'
+			target_mode(i,j,char)
 		else:
-			#print "the ship %c is completely destroyed,go to hunt mode again" %char
-			update_matrix(char)
-		#print matrix
-		#print ship_matrix
+			count_moves+=1
+			#print "Hit"
+			# update the values of the matrix
+			ship_matrix[next_target[0]][next_target[1]]='X'
+			matrix[i][j]='H'
+			matrix[next_target[0]][next_target[1]]='H'
+			
+			#probability[next_target[0]][next_target[1]]=0
+			# decide the direction
+			direction=""
+			if max_index==0:
+				direction="left"
+			elif max_index==1:
+				direction="up"
+			elif max_index==2:
+				direction="right"
+			else:
+				direction="down"
+			#print direction
+			if ship_destroyed(i,j,char)==False:
+			# call the function to completely destroy the ship
+				destroy_ship(direction,next_target[0],next_target[1],i,j,char,0)
+			else:
+				#print "the ship %c is completely destroyed,go to hunt mode again" %char
+				update_shipstate()
+			#print matrix
+			#print ship_matrix
+	else:
+		matrix[i][j]='M'		
 # checks whether there are any live ships left	
 def all_destroyed():
 	flag=1
@@ -490,14 +437,6 @@ def ship_destroyed(i,j,char):
 		return False
 	else:
 		return True					
-
-
-def update_matrix(char):
-	global matrix
-	for i in range(0,10):
-		for j in range(0,10):
-			if ship_matrix1[i][j]==char:
-				matrix[i][j]='M'	
 
 # counts the number of ways to place all(alive) ships horizontally such that they pass through (i,j)
 def count_horizontal(i,j):
