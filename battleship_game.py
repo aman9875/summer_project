@@ -2,6 +2,7 @@ from sys import argv
 from random import randint
 from sys import exit
 import game
+import time
 script,file3 = argv
 txt2=open('player2.txt')
 txt4 = open('player1.txt')
@@ -69,7 +70,8 @@ for i in range(0,10):
 		print "%c "%ship_player1[i][j],
 	print "\n"'''		
 
-
+game.print_matrix(matrix3,matrix2)
+time.sleep(0.5)
 count_moves=0
 
 def game_fun():
@@ -87,7 +89,7 @@ def game_fun():
 	else:
 		print("You missed")
 		matrix2[x][y]='M'
-
+	time.sleep(0.5)	
 	update_shipstate1()
 	game.print_matrix(matrix3,matrix2)
 #checks whether a given cell lies within the grid and not already tried
@@ -299,50 +301,6 @@ def hunt():
 			matrix[max_index[0]][max_index[1]]='M'
 			probability[max_index[0]][max_index[1]]=0
 			game_fun()
-			'''for x in range(5):
-				if shipstate[x]==1:
-					length = ship_size[x]
-					count1=0
-					count2=0
-					for i in range(max_index[1]+1,min(max_index[1]+length,10)):
-						if not(matrix[max_index[0]][i] =='M'):
-							count1 = count1+1
-						else:
-							break	
-					for i in range(max(max_index[1]-length+1,0),max_index[1]):
-						if not(matrix[max_index[0]][i] =='M'):
-							count2 = count2+1
-						else:
-							break
-					value = 1
-					for i in xrange(max_index[1]+count1,max_index[1],-1):
-						probability[max_index[0]][i] = probability[max_index[0]][i] - value
-						value = value+1
-					value=1	
-					for i in range(max_index[1]-count2,max_index[1]):
-						probability[max_index[0]][i] = probability[max_index[0]][i] - value
-						value = value+1	
-
-					count1=0
-					count2=0
-					for i in range(max_index[0]+1,min(max_index[0]+length,10)):
-						if not(matrix[i][max_index[1]] =='M'):
-							count1 = count1+1
-						else:
-							break	
-					for i in range(max(max_index[0]-length+1,0),max_index[0]):
-						if not(matrix[i][max_index[1]] =='M'):
-							count2 = count2+1
-						else:
-							break
-					value = 1
-					for i in xrange(max_index[0]+count1,max_index[0],-1):
-						probability[i][max_index[1]] = probability[i][max_index[1]] - value
-						value = value+1
-					value=1	
-					for i in range(max_index[0]-count2,max_index[0]):
-						probability[i][max_index[1]] = probability[i][max_index[1]] - value
-						value = value+1'''
 			for y in range(0,10):
 				if(y!=max_index[1]):
 					probability[max_index[0]][y]=count_horizontal(max_index[0],y)+count_vertical(max_index[0],y)
