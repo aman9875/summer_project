@@ -7,32 +7,34 @@ matrix = [['0' for i in range(10)]for j in range(10)]
 copy_matrix = [['0' for i in range(10)]for j in range(10)]
 probability = [[0 for i in range(0,10)]for j in range(0,10)]
 shipstate = [1,1,1,1,1]
+shipstate_copy = [1,1,1,1,1]
 ship_size = [5,4,3,3,2]
 test_val = 10
 sub_val = 3
 ships = ['C','B','R','S','D']
 ship_matrix = [['0' for i in range(0,10)]for j in range(0,10)]
-txt2 = open('next_move.txt','a')
+txt2 = open('next_move.csv','a')
 ans_matrix=[['0' for i in range(0,10)]for j in range(0,10)] #this matrix stores the output values
+#txt2 = open('ships.txt','w')
 #read from file
 for i in range(0,10):
 	for j in range(0,10):
 		matrix[i][j] = txt.read(1)
 		copy_matrix[i][j]=matrix[i][j]
 		char = txt.read(1)
+for i in range(0,5):
+	shipstate_copy[i] = int(txt.read(1))
 
-ship_train_state=['0','0','0','0','0']
-for i in range(5):
-	ship_train_state[i]=txt.read(1)
-#print ship_train_state
-#print matrix
-hits = [[0 for x in range(0,4)]for y in range(0,50)]
-
-def is_exists(i,j):
-	if (i>=0 and i<10 and j>=0 and j<10):
-		return 1
-	else:
-		return 0	
+'''for i in range(10):
+		for j in range(10):
+			if j!=9:
+				print("%c "%matrix[i][j]),
+			else:
+				print("%c\n"%matrix[i][j]),
+for i in range(0,5):
+	print("%d "%shipstate_copy[i]),
+'''					
+hits = [[0 for x in range(0,4)]for y in range(0,10)]
 
 def write_to_file():
 	ship=""
@@ -41,73 +43,10 @@ def write_to_file():
 			if j!=9:
 				ship+=ship_matrix[i][j]+" "
 			else:
-				ship+=ship_matrix[i][j]+"\n"			
+				ship+=ship_matrix[i][j]+"\n"					
 	txt2.write(ship)
 	txt2.write("\n")				
 
-
-def calculate_prob():
-	for i in range(0,10):
-		for j in range(0,10):
-			probability[i][j]=0
-	for x in range(5):
-		if shipstate[x]==1:
-			length = ship_size[x]
-			for i in range(10):
-				count = 0
-				initial = 0
-				for j in range(10):
-					if not (matrix[i][j]=='M'):
-						count=count+1
-					if (matrix[i][j]=='M') or j==9:
-						if count>=length:
-							max_value = count-length+1
-							if max_value>length:
-								max_value=length
-							value=1
-							start = initial
-							end = initial+count-1
-							while start<=end:
-								if(value>max_value):
-									value = max_value
-								if start!=end:
-									probability[i][start]=probability[i][start]+value
-									probability[i][end]=probability[i][end]+value
-								else:
-									probability[i][start]=probability[i][start]+value
-								start+=1
-								end-=1
-								value+=1			
-
-						initial = j+1
-						count=0
-			for i in range(10):
-				count = 0
-				initial = 0
-				for j in range(10):
-					if not (matrix[j][i]=='M'):
-						count=count+1
-					if (matrix[j][i]=='M') or j==9:
-						if count>=length:
-							max_value = count-length+1
-							if max_value>length:
-								max_value=length
-							value=1
-							start = initial
-							end = initial+count-1
-							while start<=end:
-								if(value>max_value):
-									value=max_value
-								if start!=end:
-									probability[start][i]=probability[start][i]+value
-									probability[end][i]=probability[end][i]+value
-								else:
-									probability[start][i]=probability[start][i]+value	
-								start+=1
-								end-=1
-								value+=1			
-						initial = j+1
-						count=0
 
 def find_max_prob():
 	maximum = 0
@@ -117,17 +56,28 @@ def find_max_prob():
 			if probability[i][j]>maximum:
 				maximum=probability[i][j]
 				maximum_index=[i,j]
-
-	print("%c %d"%(maximum_index[0]+65,maximum_index[1]+1))	
-	ans_matrix[maximum_index[0]][maximum_index[1]]='1'		
+	print("%d%d"%(maximum_index[0],maximum_index[1]))			
 
 def print_prob():
 	for i in range(0,10):
 		for j in range(0,10):
 			if j==9:
-				print("%d\n"%(probability[i][j])),
+				print("%f\n"%(float(probability[i][j])/100)),
 			else:
-				print("%d "%(probability[i][j])),	
+				print("%f "%(float(probability[i][j])/100)),
+
+def sort(n):
+	for i in range(0,n):
+		maximum = hits[i][2]
+		maximum_index = i
+		for j in range(i+1,n):
+			if hits[j][2]>maximum:
+				maximum=hits[j][2]
+				maximum_index=j		
+		for j in range(0,4):
+			temp = hits[i][j]
+			hits[i][j] = hits[maximum_index][j]
+			hits[maximum_index][j] = temp		
 
 #search for positions which have hits
 def search_hits():
@@ -138,14 +88,14 @@ def search_hits():
 				matrix[i][j]='0'
 				length =1
 				direction = -1
-				if (is_exists(i+1,j)==1 and matrix[i+1][j]=='H'):
+				if i+1<10 and matrix[i+1][j]=='H':
 					x=i+1
 					direction=1
 					while x<10 and matrix[x][j]=='H':
 						matrix[x][j]='0'
 						length+=1
-						x+=1
-				elif (is_exists(i,j+1)==1 and matrix[i][j+1]=='H'):
+						x+=1			
+				elif j+1<10 and matrix[i][j+1]=='H':
 					x=j+1
 					direction=2
 					while x<10 and matrix[i][x]=='H':
@@ -153,7 +103,11 @@ def search_hits():
 						length+=1
 						x+=1
 				hits[idx] = [i,j,length,direction]
+				#print("x = %d y = %d length = %d dir = %d"%(i+1,j+1,length,direction))
 				idx+=1
+	sort(idx)
+	#print(hits)			
+	#print("Finish")			
 
 def empty_ship_matrix():
 	for i in range(10):
@@ -162,23 +116,42 @@ def empty_ship_matrix():
 
 def update_ship_state():
 	for i in range(0,5):
-		if ship_train_state[i]=='1':
-			shipstate[i]=1
-		else:
-			shipstate[i]=0	
+		shipstate[i]=shipstate_copy[i]
 
 #generate the probability matrix by taking a large number of random configurations
 def generate():
-	for num in range(1000):
-		empty_ship_matrix()
-		update_ship_state()
-		for x in hits:
-			if x!= [0,0,0,0]:
-				if x[3]!=-1:
-					place_ships_hit_area(x[0],x[1],x[2],x[3])
-				else:
-					d = randint(1,2)
-					place_ships_hit_area(x[0],x[1],x[2],d)
+	yet_another_flag=1
+	for num in range(10000):
+		another_flag = 0
+		for tires in range(100):
+			empty_ship_matrix()
+			update_ship_state()
+			big_flag = 1
+			for x in hits:
+				if x!= [0,0,0,0]:
+					if x[3]!=-1:
+						place_ships_hit_area(x[0],x[1],x[2],x[3])
+					else:
+						flag = 0
+						for i in range(0,20):
+							rand = randint(1,100)
+							if rand<=50:
+								d = 1
+							else:
+								d=2	
+							if place_ships_hit_area(x[0],x[1],x[2],d)==1:
+								flag = 1
+								break
+						if flag ==0:
+							big_flag=0
+			if big_flag ==1:
+				another_flag=1
+				break
+		#print(another_flag)		
+		if another_flag==0:
+			yet_another_flag=0
+			break												
+		#print(num)
 		main()
 		for i in range(10):
 			for j in range(10):
@@ -187,30 +160,54 @@ def generate():
 		for i in range(10):
 			for j in range(10):
 				if copy_matrix[i][j]=='H':
-					probability[i][j]=0	
+					probability[i][j]=0
+		#write_to_file()
+	if yet_another_flag==0:
+		return -1
+	else:
+		return 1					
 
 #place the ships at the hit positions
 def place_ships_hit_area(x,y,length,direction):
-	while(True):
+	#print("x=%d y=%d lenght=%d dir=%d"%(x,y,length,direction))
+	#print(shipstate)
+	big_flag = 0
+	for j in range(0,50):
 		num = randint(0,4)
 		if shipstate[num]==1:
 			if ship_size[num]>length:
 				diff = ship_size[num]-length
-				while(True):
+				#print("ship length = %d"%(ship_size[num]))
+				flag=0
+				for i in range(0,50):
 					r = randint(0,diff)
+					#print("r = %d"%(r))
 					if direction==1:
-						if x-r>=0 and x-r+ship_size[num]<=9:
+						#print("check hits = %r"%(check_hits(x,y,length,r,direction,ship_size[num])))
+						if x-r>=0 and x-r+ship_size[num]<=10 and check(x-r,y,direction,ship_size[num])==True and check_hits(x,y,length,r,direction,ship_size[num])==True:
 							for i in range(x-r,x-r+ship_size[num]):
 								ship_matrix[i][y]=ships[num]
 							shipstate[num]=0
+							flag=1
 							break	
 					elif direction==2:
-						if y-r>=0 and y-r+ship_size[num]<=9:
+						#print("check hits = %r"%(check_hits(x,y,length,r,direction,ship_size[num])))
+						if y-r>=0 and y-r+ship_size[num]<=10 and check(x,y-r,direction,ship_size[num])==True and check_hits(x,y,length,r,direction,ship_size[num])==True:
 							for i in range(y-r,y-r+ship_size[num]):
 								ship_matrix[x][i]=ships[num]
 							shipstate[num]=0
-							break	
-				break					
+							flag=1
+							break
+				if flag == 1:
+					big_flag=1								
+					break
+	if big_flag == 1:
+		#print("true")
+		return 1
+	else:
+		#print("false")
+		return 0					
+	#print("done")								
 #place the ship horizontally
 def write_at_x(a,b,x,l):
 	for i in range(b,b+l):
@@ -224,7 +221,7 @@ def write_at_y(a,b,x,l):
 #check if the ship can be placed at the random coordinates
 def check(a,b,d,l):
 	flag=0
-	if d==0:
+	if d==2:
 		if b+l>10:
 			return False
 		for i in range(b,b+l):
@@ -247,7 +244,23 @@ def check(a,b,d,l):
 		else:
 			return True
 										
-
+def check_hits(x,y,l,r,d,sl):
+	if d==1:
+		for i in range(x-r,x):
+			if i>=0 and copy_matrix[i][y]=='H':
+				return False
+		for i in range(x+l,x-r+sl):
+			if i<10 and copy_matrix[i][y]=='H':
+				return False
+	else:
+		for i in range(y-r,y):
+			if i>=0 and copy_matrix[x][i]=='H':
+				return False
+		for i in range(y+l,y-r+sl):
+			if i<10 and copy_matrix[x][i]=='H':
+				return False
+	return True
+									
 #place all the remaining ships
 def main():
 	idx=0
@@ -256,8 +269,8 @@ def main():
 			while(True):
 				a = randint(0,9)
 				b = randint(0,9)
-				direction = randint(0,1)
-				if(direction==0):
+				direction = randint(1,2)
+				if(direction==2):
 					if not(check(a,b,direction,ship_size[idx])):
 						continue
 					else:
@@ -273,38 +286,45 @@ def main():
 		idx=idx+1				
 
 
-#check whether to go to hunt or target mode
-flag = False
-for i in range(0,10):
-	for j in range(0,10):
-		if matrix[i][j]=='H':
-			flag = True
-
-if flag ==False:
-	calculate_prob()
-	print_prob()
+search_hits()
+wr=generate()
+if wr==1:	
+	#print_prob()
 	find_max_prob()
 else:
-	search_hits()
-	generate()
-	print_prob()
-	find_max_prob()
-	
-s=""   # this is to write the state in a string format
-for i in range(0,10):
-	for j in range(0,10):
-		if copy_matrix[i][j]=='0':
-			s+='0\t'
-		elif copy_matrix[i][j]=='M':
-			s+='-1\t'
-		else:
-			s+='1\t'
+	print -1		
+#print(check(5,4,2,3))
+#print(check_hits(1,5,3,0,1,5))
+#update_ship_state()
+#print(place_ships_hit_area(4,2,1,1))
 
-for i in range(0,10):
-	for j in range(0,10):
-		s+=ans_matrix[i][j]+"\t"
+if wr==1:
+	s=""   # this is to write the state in a string format
+	for i in range(0,10):
+		for j in range(0,10):
+			if copy_matrix[i][j]=='0':
+				s+='0,'
+			elif copy_matrix[i][j]=='M':
+				s+='-1,'
+			else:
+				s+='1,'
 
-txt2.write(s)
-txt2.write("\n")
+			
+	for i in range(0,10):
+		for j in range(0,10):
+			if j!=9 or i!=9:
+				s+=str(float(probability[i][j])/100)+","
+			else:
+				s+=str(float(probability[i][j])/100)
+
+				'''
+				if ans_matrix[i][j]=='1':
+					t=(i*10)+(j+1)
+					s+="%d"%(t)
+					break
+				'''
+	txt2.write(s)
+	txt2.write("\n")
+
 
 
