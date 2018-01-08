@@ -1,2 +1,2 @@
-# summer_project
+# Summer_Project
 Battleship Gaming AI
