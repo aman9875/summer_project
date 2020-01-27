@@ -182,7 +182,7 @@ def calc_max_prob():
 		for j in range(0,10):
 			if probability[i][j]==max_val:
 				max_matrix.append((i,j))
-				print "(%d,%d)"%(i,j),
+				# print "(%d,%d)"%(i,j),
 				count+=1
 	m=-1
 	m_x=0
@@ -206,7 +206,7 @@ def calc_max_prob():
 	max_index[0]=m_x
 	max_index[1]=m_y
 	#print_prob()
-	print("(%d,%d)"%(max_index[0],max_index[1]))
+	# print("(%d,%d)"%(max_index[0],max_index[1]))
 	return max_index			
 # it checks whether a cell given by hunt_begin() contains a ship or not.
 # if it does not then updates the values of the row and coloumn and recursively calls again
@@ -238,7 +238,7 @@ def hunt():
 			target_mode(max_index[0],max_index[1],char)
 			if(all_destroyed()==True):
 				#print "Game Over"
-				print count_moves
+				# print count_moves
 				z = str(count_moves)
 				txt3.write(z)
 				txt4.close()
@@ -248,14 +248,14 @@ def hunt():
 				hunt()
 		elif ship_matrix[max_index[0]][max_index[1]] =='X':
 			#print "Game Over"
-			print count_moves
+			# print count_moves
 			z = str(count_moves)
 			txt3.write(z)
 			txt4.close()
 	else:
 		#print "Game Over"
 		z = str(count_moves)
-		print count_moves
+		# print count_moves
 		txt3.write(z)
 		txt4.close()
 			
@@ -285,7 +285,7 @@ def target_mode(i,j,char):
 			next_target=[i+1,j]
 		txt4.write(str(next_target[0]))
 		txt4.write(str(next_target[1]))	
-		print "(%d,%d)" %(next_target[0],next_target[1])
+		# print "(%d,%d)" %(next_target[0],next_target[1])
 		# if the next target turns a miss recursivevly call the function again
 		if ship_matrix[next_target[0]][next_target[1]]=='0':
 			count_moves+=1
@@ -344,7 +344,7 @@ def destroy_ship(direction,i,j,start_i,start_j,char,flag):      # the flag helps
 				txt4.write(str(j))
 				if try_cell(i-1,j)==True:
 					count_moves+=1
-					print "(%d,%d)"%(i-1,j)
+					# print "(%d,%d)"%(i-1,j)
 					#print "Hit"
 					ship_matrix[i-1][j]='X'
 					matrix[i-1][j]='H'
@@ -352,7 +352,7 @@ def destroy_ship(direction,i,j,start_i,start_j,char,flag):      # the flag helps
 					if ship_destroyed(start_i,start_j,char)==False:
 						destroy_ship("up",i-1,j,start_i,start_j,char,flag)
 				else:
-					print "(%d,%d)"%(i-1,j)
+					# print "(%d,%d)"%(i-1,j)
 					#print "Missed"
 					matrix[i-1][j]='M'
 					probability[i-1][j]=0
@@ -370,7 +370,7 @@ def destroy_ship(direction,i,j,start_i,start_j,char,flag):      # the flag helps
 				txt4.write(str(j-1))
 				if try_cell(i,j-1)==True:
 					count_moves+=1
-					print "(%d,%d)" %(i,j-1)
+					# print "(%d,%d)" %(i,j-1)
 					#print "Hit"
 					ship_matrix[i][j-1]='X'
 					matrix[i][j-1]='H'
@@ -378,7 +378,7 @@ def destroy_ship(direction,i,j,start_i,start_j,char,flag):      # the flag helps
 					if ship_destroyed(start_i,start_j,char)==False:
 						destroy_ship("left",i,j-1,start_i,start_j,char,flag)
 				else:
-					print "(%d,%d)" %(i,j-1)
+					# print "(%d,%d)" %(i,j-1)
 					#print "Missed"   
 					matrix[i][j-1]='M'
 					probability[i][j-1]=0
@@ -396,7 +396,7 @@ def destroy_ship(direction,i,j,start_i,start_j,char,flag):      # the flag helps
 				txt4.write(str(j))
 				if try_cell(i+1,j)==True:
 					count_moves+=1
-					print "(%d,%d)" %(i+1,j)
+					# print "(%d,%d)" %(i+1,j)
 					#print "Hit"
 					ship_matrix[i+1][j]='X'
 					matrix[i+1][j]='H'
@@ -404,7 +404,7 @@ def destroy_ship(direction,i,j,start_i,start_j,char,flag):      # the flag helps
 					if ship_destroyed(start_i,start_j,char)==False:
 						destroy_ship("down",i+1,j,start_i,start_j,char,flag)
 				else:
-					print "(%d,%d)" %(i+1,j)
+					# print "(%d,%d)" %(i+1,j)
 					#print "Missed"
 					matrix[i+1][j]='M'
 					probability[i+1][j]=0
@@ -423,7 +423,7 @@ def destroy_ship(direction,i,j,start_i,start_j,char,flag):      # the flag helps
 				txt4.write(str(j+1))
 				if try_cell(i,j+1)==True:
 					count_moves+=1
-					print "(%d,%d)" %(i,j+1)
+					# print "(%d,%d)" %(i,j+1)
 					#print "Hit"
 					ship_matrix[i][j+1]='X'
 					matrix[i][j+1]='H'
@@ -431,7 +431,7 @@ def destroy_ship(direction,i,j,start_i,start_j,char,flag):      # the flag helps
 					if ship_destroyed(start_i,start_j,char)==False:
 						destroy_ship("right",i,j+1,start_i,start_j,char,flag)
 				else:
-					print "(%d,%d)" %(i,j+1)
+					# print "(%d,%d)" %(i,j+1)
 					#print "Missed"
 					matrix[i][j+1]='M'
 					probability[i][j+1]=0

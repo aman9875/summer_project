@@ -427,7 +427,7 @@ def DestroyBox(boxx,boxy,number):
 	pygame.draw.rect(DISPLAYSURF,LIGHTGREEN,box_rect)
 
 def AllDestroyed(number):
-	updateStats(number)
+	# updateStats(number)
 	displayRemaining()
 	if number == 1:
 		text = "You have lost."
@@ -743,7 +743,7 @@ def placing_ships_vertical(ship,size):
 			for i in range(size):
 				if occupied[ship[0][0]][ship[0][1]+i]==1:
 					flag=0
-					print flag	
+					# print flag	
 			if flag==1:
 				ship1=[]		
 				for i in range(size):
@@ -894,7 +894,7 @@ def move_left_vertical(ship,size):
 	ship1=[]
 	for i in range(size):
 		if ship[i][0]<=0:
-			print ship
+			# print ship
 			flag=0
 			return ship
 	for i in range(size):		
@@ -1097,8 +1097,8 @@ def move_up_vertical(ship,size):
 
 	if flag==1:
 		box_rect=leftcordsofbox(ship[0][0],ship[0][1]-1,1)
-		print ship[0]
-		print ship[size-1]
+		# print ship[0]
+		# print ship[size-1]
 		pygame.draw.rect(DISPLAYSURF,PLACE,box_rect)
 		box_rect=leftcordsofbox(ship[size-1][0],ship[size-1][1],1)
 		pygame.draw.rect(DISPLAYSURF,NAVYBLUE,box_rect)
@@ -1112,13 +1112,13 @@ def move_up_vertical(ship,size):
 def move_down_vertical(ship,size):
 	flag=1
 	ship1=[]
-	print ship 
+	# print ship 
 	for i in range(size):
 		if ship[i][1]>=9:
 			flag=0
 			return ship
 	if occupied[ship[size-1][0]][ship[size-1][1]+1]==1:
-		print occupied		
+		# print occupied		
 		for i in range(ship[size-1][1]+2,9,1):
 			if(occupied[ship[size-1][0]][i]==0 and 9-i>=size-1):
 				flag1=1
@@ -1161,7 +1161,7 @@ def move_left_horizontal(ship,size):
 			flag=0
 			return ship
 	if occupied[ship[0][0]-1][ship[0][1]]==1:
-		print occupied		
+		# print occupied		
 		for i in range(ship[0][0]-2,0,-1):
 			if(occupied[i][ship[0][1]]==0 and i>=size-1):
 				flag1=1
@@ -1203,7 +1203,7 @@ def move_right_horizontal(ship,size):
 			flag=0
 			return ship
 	if occupied[ship[size-1][0]+1][ship[size-1][1]]==1:
-		print occupied		
+		# print occupied		
 		for i in range(ship[size-1][0]+2,9,1):
 			if(occupied[i][ship[size-1][1]]==0 and 9-i>=size-1):
 				flag1=1
